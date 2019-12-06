@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Load the JS file -->
+  <script src="https://cdn.jsdelivr.net/npm/@gitgraph/js"></script>
+</head>
+
+<body>
+
+    <button onclick="reset()">重置</button>
+  <button onclick="next()">提交代码/PR</button>
+  <button onclick="finalCommit()">最终提交</button>
+  <!-- DOM element in which we'll mount our graph -->
+  <div id="graph-container"></div>
+
+  <!-- Use the `GitgraphJS` global variable to create your graph -->
+  <script>
+    window.commits = 0;
+    function next() {
+      window.commits++;
+      render();
+    }
+    // https://codepen.io/nicoespeon/pen/arqPWb
+
+    function reset(){
+      window.fullMode = false;
+      window.commits = 0;
+      next();
+    }
+    function finalCommit(){
+      window.fullMode = true;
+      render();
+    }
+
+    finalCommit();
+
+    function breakpoint() {
+      if(window.fullMode){
+        return;
+      }
+      if (window.commits < window.breaks) {
+        throw new Error();
+      }
+      window.breaks++;
+    }
+    function render() {
+      window.breaks = 1;
+      const graphContainer = document.getElementById("graph-container");
+      graphContainer.innerHTML = '';
+      const gitgraph = GitgraphJS.createGitgraph(graphContainer);
+      const master = gitgraph.branch("master");
+      master.commit("RC-1020 系统管理");
+      breakpoint();
+      const release_legacy = gitgraph.branch("release/legacy");
+      breakpoint();
+      release_legacy.commit("Add TypeScript");
+
+      breakpoint();
+      master.merge(release_legacy).tag("r28.0");
+
+      breakpoint();
+      const release_20191204 = gitgraph.branch("release/20191204");
+
+      const RC_1201 = gitgraph.branch("RC-1201");
+      RC_1201.commit("RC-1201 AFC搜索列表");
+      breakpoint();
+
+      release_20191204.merge(RC_1201);
+      breakpoint();
+      RC_1201.commit("RC-1201 AFC搜索列表 增加操作列");
+      breakpoint();
+      release_20191204.merge(RC_1201);
+      breakpoint();
+      master.merge(release_20191204, "正常操作");
+    }
+    // Get the graph container HTML element.
+
+    // Instantiate the graph.
+
+    // Simulate git commands with Gitgraph API.
+
+    // const release_next = gitgraph.branch("release/next");
+    // release_next.commit("Add TypeScript");
+
+    // const aFeature = gitgraph.branch("a-feature");
+    // aFeature
+    //   .commit("Make it work")
+    //   .commit("Make it right")
+    //   .commit("Make it fast");
+
+    //   release_next.merge(aFeature);
+    //   release_next.commit("Prepare v1");
+
+    // master.merge(release_next).tag("v1.0.0");
+  </script>
+</body>
+
+</html>
