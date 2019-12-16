@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Load the JS file -->
+  <script src="https://cdn.jsdelivr.net/npm/@gitgraph/js"></script>
+</head>
+
+<body>
+
+  <button onclick="reset()">重置</button>
+  <button onclick="next()">提交代码/PR</button>
+  <button onclick="finalCommit()">最终提交</button>
+  <!-- DOM element in which we'll mount our graph -->
+  <div id="graph-container"></div>
+
+  <!-- Use the `GitgraphJS` global variable to create your graph -->
+  <script>
+    window.commits = 0;
+    function next() {
+      window.commits++;
+      render();
+    }
+    // https://codepen.io/nicoespeon/pen/arqPWb
+
+    function reset() {
+      window.fullMode = false;
+      window.commits = 0;
+      next();
+    }
+    function finalCommit() {
+      window.fullMode = true;
+      render();
+    }
+
+    finalCommit();
+
+    function breakpoint() {
+      if (window.fullMode) {
+        return;
+      }
+      if (window.commits < window.breaks) {
+        throw new Error();
+      }
+      window.breaks++;
+    }
+    function render() {
+      window.breaks = 1;
+      const graphContainer = document.getElementById("graph-container");
+      graphContainer.innerHTML = '';
+      const gitgraph = GitgraphJS.createGitgraph(graphContainer);
+      const master = gitgraph.branch("master");
+      master.commit("RC-1020 系统管理");
+      breakpoint();
+      const release_legacy = gitgraph.branch("release/legacy");
+      const demo = gitgraph.branch("demo");
+      breakpoint();
+      release_legacy.commit("使用 CRA 打包");
+      breakpoint();
+      master.merge(release_legacy).tag("r26.0");
+      breakpoint();
+      release_legacy.commit("新功能");
+      breakpoint();
+      master.commit("Cherry-Pick: 新功能").tag("r26.1");
+      breakpoint();
+      release_legacy.merge(master);
+      breakpoint();
+      release_legacy.commit("登录页改造");
+      breakpoint();
+      master.merge(release_legacy).tag("r27.0");
+      const release_next = gitgraph.branch("release/next");
+      breakpoint();
+      const release_20191211 = gitgraph.branch("release/20191211");
+      const RC_1201 = gitgraph.branch("RC-1201");
+      const RC_2001 = gitgraph.branch("RC-2001");
+      RC_1201.commit("RC-1201 AFC搜索列表");
+      breakpoint();
+      release_20191211.merge(RC_1201);
+      breakpoint();
+      RC_1201.commit("RC-1201 AFC搜索列表 增加操作列");
+      breakpoint();
+      release_20191211.merge(RC_1201);
+      const RC_1236 = gitgraph.branch("RC_1236");
+      breakpoint();
+      RC_1236.commit("RC-1236 知识图谱依赖 RC-1201");
+      breakpoint();
+      release_20191211.merge(RC_1236);
+      breakpoint();
+      RC_2001.commit("RC-2001 电核页面");
+      breakpoint();
+      release_20191211.merge(RC_2001);
+      breakpoint();
+      release_next.merge(release_20191211);
+      breakpoint();
+      master.merge(release_20191211, "当天部署").tag("r29.0");
+      const hotfix_RC_3001 = gitgraph.branch("hotfix/RC_3001");
+      const testing_r29 = gitgraph.branch("testing/r29.0");
+      const hotfix_RC_9000 = gitgraph.branch("hotfix/RC-9000");
+      breakpoint();
+      hotfix_RC_3001.commit("hotfix/RC-3001 Hotfix 空指针");
+      hotfix_RC_9000.commit("hotfix/RC-3001 Hotfix 兼容性问题");
+
+      testing_r29.merge(hotfix_RC_9000);
+
+      breakpoint();
+      release_next.merge(hotfix_RC_3001);
+      breakpoint();
+      master.merge(hotfix_RC_3001).tag("r29.1");
+
+      const release_20191218 = gitgraph.branch("release/20191218");
+      const release_20191225 = gitgraph.branch("release/20191225");
+      breakpoint();
+      release_20191218.commit("RC-4001 操作日志");
+      breakpoint();
+      release_20191225.commit("RC-5001 黑白灰交叉场景");
+      const release_conflict = gitgraph.branch("release/conflict");
+      breakpoint();
+      release_next.merge(release_20191218);
+      breakpoint();
+      release_next.merge(release_20191225);
+      breakpoint();
+      master.merge(release_20191218).tag("r30.0");
+      breakpoint();
+      release_conflict.merge(master, "Conflict: Merge branch master - Sergio Flores <saxo-guy@epic.com>");
+      breakpoint();
+      master.merge(release_conflict).tag("r31.0");
+      const release_20200101 = gitgraph.branch("release/20200101");
+      breakpoint();
+      release_20200101.commit("RC-5001 新年快乐");
+    }
+    // Get the graph container HTML element.
+
+    // Instantiate the graph.
+
+    // Simulate git commands with Gitgraph API.
+
+    // const release_next = gitgraph.branch("release/next");
+    // release_next.commit("Add TypeScript");
+
+    // const aFeature = gitgraph.branch("a-feature");
+    // aFeature
+    //   .commit("Make it work")
+    //   .commit("Make it right")
+    //   .commit("Make it fast");
+
+    //   release_next.merge(aFeature);
+    //   release_next.commit("Prepare v1");
+
+    // master.merge(release_next).tag("v1.0.0");
+  </script>
+</body>
+
+</html>
