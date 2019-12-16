@@ -1,0 +1,23 @@
+{
+  "name": "git-branch-management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "gh-pages -d src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Derek-Hu/git-branch-management.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Derek-Hu/git-branch-management/issues"
+  },
+  "homepage": "https://github.com/Derek-Hu/git-branch-management#readme",
+  "dependencies": {
+    "gh-pages": "^2.1.1"
+  }
+}

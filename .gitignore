@@ -1,0 +1,14 @@
+node_modules
+.DS_Store
+/dist
+/build
+/report
+.idea
+.vscode
+*.code-workspace
+
+!/swagger
+/swagger/*
+!/swagger/browser.js
+!/swagger/code-gen.js
+!/swagger/code-router.js
